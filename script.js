@@ -32,7 +32,7 @@ const Gameboard = (function() {
     return { getBoard, printBoard, markSquare, getSquare, rows, columns };
 })();
 
-const Game = (function() {
+const GameController = (function() {
     playerOne = createPlayer(prompt("Player One Name: "), "X");
     playerTwo = createPlayer(prompt("Player Two Name: "), "O");
     players = [playerOne, playerTwo];
@@ -109,5 +109,8 @@ function Square() {
 }
 
 function createPlayer(name, symbol) {
-    return { name, symbol };
+
+    const setName = (newName) => name = newName;
+
+    return { name, symbol, setName };
 }
