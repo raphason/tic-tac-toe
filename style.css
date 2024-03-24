@@ -1,17 +1,85 @@
+:root {
+    --square-length: 150px;
+    --bg-color: #222222;
+    --board-bg-color: #303030;
+    --square-hover-color: #333333;
+}
+
 body {
     width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: var(--bg-color);
+    color: orange;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 .board {
-    border: solid 2px black;
+    border: none;
+    border-radius: 10px;
+    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    background-color: var(--board-bg-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.row-separator {
+    height: 1px;
+    background-color: lightgray;
+    margin: 0 10px;
+}
+
+.col-separator-top {
+    width: 1px;
+    background-color: lightgray;
+    margin-top: 10px;
+}
+
+.col-separator-middle {
+    width: 1px;
+    background-color: lightgray;
+}
+
+.col-separator-bottom {
+    width: 1px;
+    background-color: lightgray;
+    margin-bottom: 10px;
+}
+
+.board-row {
+    display: flex;
+}
+
+#tl:hover {
+    border-top-left-radius: 10px;
+}
+
+#tr:hover {
+    border-top-right-radius: 10px;
+}
+
+#bl:hover {
+    border-bottom-left-radius: 10px;
+}
+
+#br:hover {
+    border-bottom-right-radius: 10px;
 }
 
 .square {
-    border: solid 2px black;
-    width: 120px;
-    height: 120px;
+    border: none;
+    width: var(--square-length);
+    height: var(--square-length);
+    font-size: 100px;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square:hover {
+    background-color: var(--square-hover-color);
+    cursor: pointer;
 }

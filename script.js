@@ -4,10 +4,13 @@ const Gameboard = (function() {
     const board = [];
 
     //Create Board
-    for (let i = 0; i < rows; i++) {
-        board[i] = [];
-        for (let j = 0; j < columns; j++) {
-            board[i].push(Square());
+    const reset = () => {
+        board = [];
+        for (let i = 0; i < rows; i++) {
+            board[i] = [];
+            for (let j = 0; j < columns; j++) {
+                board[i].push(Square());
+            }
         }
     }
 
@@ -29,12 +32,14 @@ const Gameboard = (function() {
         square.changeValue(symbol);
     };
 
+    reset();
+
     return { getBoard, printBoard, markSquare, getSquare, rows, columns };
 })();
 
 const GameController = (function() {
-    playerOne = createPlayer(prompt("Player One Name: "), "X");
-    playerTwo = createPlayer(prompt("Player Two Name: "), "O");
+    playerOne = createPlayer("Player One", 0, "X");
+    playerTwo = createPlayer("Player Two", 1, "O");
     players = [playerOne, playerTwo];
     let activePlayer = players[0];
     let winnerFound = false;
@@ -93,7 +98,38 @@ const GameController = (function() {
         }
     };
 
-    return { playRound, checkWinner };
+    return { playRound, getActivePlayer };
+})();
+
+const DisplayController = (function() {
+    const colors = ["red", "blue"];
+
+    const squares = document.getElementsByClassName("square");
+    Object.setPrototypeOf(HTMLCollection.prototype, Array.prototype);
+    squares.forEach(square => square.addEventListener("click", squareClickHandler));
+
+    
+
+    function squareClickHandler(e) {
+        let currentSquare = e.target.dataset.number;
+        GameController.playRound(currentSquare);
+        currentPlayer = GameController.getActivePlayer().number;
+
+        e.target.style.color = colors[GameController.getActivePlayer().number];
+
+        displayBoard();
+    }
+
+    const displayBoard = () => {
+        for (let i = 0; i < squares.length; i++) {
+            let currentSquare = squares[i];
+            currentSquare.innerHTML = '';
+            let squareText = Gameboard.getSquare(i).getValue();
+            let textNode = document.createTextNode(squareText);
+
+            currentSquare.appendChild(textNode);
+        }
+    }
 })();
 
 function Square() {
@@ -108,9 +144,9 @@ function Square() {
     return { changeValue, getValue, isEmpty };
 }
 
-function createPlayer(name, symbol) {
+function createPlayer(name, number, symbol) {
 
     const setName = (newName) => name = newName;
 
-    return { name, symbol, setName };
+    return { name, number, symbol, setName };
 }
