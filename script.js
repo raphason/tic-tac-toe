@@ -1,7 +1,7 @@
 const Gameboard = (function() {
     const rows = 3;
     const columns = 3;
-    const board = [];
+    let board = [];
 
     //Create Board
     const reset = () => {
@@ -32,17 +32,15 @@ const Gameboard = (function() {
         square.changeValue(symbol);
     };
 
-    reset();
-
-    return { getBoard, printBoard, markSquare, getSquare, rows, columns };
+    return { getBoard, printBoard, markSquare, getSquare, reset, rows, columns };
 })();
 
 const GameController = (function() {
     playerOne = createPlayer("Player One", 0, "X");
     playerTwo = createPlayer("Player Two", 1, "O");
     players = [playerOne, playerTwo];
-    let activePlayer = players[0];
-    let winnerFound = false;
+    let activePlayer;
+    let winnerFound;
 
     const getActivePlayer = () => activePlayer;
 
@@ -98,7 +96,15 @@ const GameController = (function() {
         }
     };
 
-    return { playRound, getActivePlayer };
+    const newGame = () => {
+        Gameboard.reset();
+        activePlayer = players[0];
+        winnerFound = false;
+    }
+
+    newGame();
+
+    return { playRound, getActivePlayer, newGame };
 })();
 
 const DisplayController = (function() {
@@ -108,7 +114,8 @@ const DisplayController = (function() {
     Object.setPrototypeOf(HTMLCollection.prototype, Array.prototype);
     squares.forEach(square => square.addEventListener("click", squareClickHandler));
 
-    
+    const resetButton = document.getElementById("reset-button");
+    resetButton.addEventListener("click", resetClickHandler);    
 
     function squareClickHandler(e) {
         let currentSquare = e.target.dataset.number;
@@ -119,6 +126,11 @@ const DisplayController = (function() {
 
         displayBoard();
     }
+
+    function resetClickHandler() {
+        GameController.newGame();
+        squares.forEach(square => square.innerHTML = '');
+    };
 
     const displayBoard = () => {
         for (let i = 0; i < squares.length; i++) {

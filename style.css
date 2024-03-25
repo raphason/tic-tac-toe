@@ -83,3 +83,7 @@ body {
     background-color: var(--square-hover-color);
     cursor: pointer;
 }
+
+#reset-button {
+    margin: 20px;
+}
