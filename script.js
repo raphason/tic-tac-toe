@@ -85,7 +85,7 @@ const GameController = (function() {
         let selectedSquare = Gameboard.getSquare(square);
 
         if (!winner && selectedSquare.isEmpty()) {
-            console.log(getActivePlayer().name + " marks square " + square + ".")
+            console.log(getActivePlayer().getName() + " marks square " + square + ".")
             Gameboard.markSquare(selectedSquare, getActivePlayer().symbol);
             Gameboard.printBoard();
             swapActivePlayer();
@@ -104,7 +104,7 @@ const GameController = (function() {
 
     newGame();
 
-    return { playRound, getActivePlayer, newGame, checkWinner };
+    return { playRound, getActivePlayer, newGame, checkWinner, players };
 })();
 
 const DisplayController = (function() {
@@ -118,6 +118,9 @@ const DisplayController = (function() {
     resetButton.addEventListener("click", resetClickHandler);    
 
     const winnerDisplay = document.getElementById("winner");
+
+    const nameForm = document.getElementById("name-form");
+    nameForm.addEventListener("submit", nameFormHandler);
 
     function squareClickHandler(e) {
         let currentSquare = e.target.dataset.number;
@@ -134,7 +137,17 @@ const DisplayController = (function() {
         GameController.newGame();
         squares.forEach(square => square.innerHTML = '');
         winnerDisplay.innerHTML = '';
-    };
+    }
+
+    function nameFormHandler(e) {
+        e.preventDefault();
+
+        let newPlayerOneName = document.getElementById("player-one-name").value;
+        let newPlayerTwoName = document.getElementById("player-two-name").value;
+
+        GameController.players[0].setName(newPlayerOneName);
+        GameController.players[1].setName(newPlayerTwoName);
+    } 
 
     const displayBoard = () => {
         for (let i = 0; i < squares.length; i++) {
@@ -149,7 +162,7 @@ const DisplayController = (function() {
 
     const displayWinner = () => {
         let winner = GameController.checkWinner();
-        let winnerString = winner ? winner.name + " wins!" : "";
+        let winnerString = winner ? winner.getName() + " wins!" : "";
         let winnerText = document.createTextNode(winnerString);
         winnerDisplay.innerHTML = '';
         winnerDisplay.appendChild(winnerText);
@@ -168,9 +181,14 @@ function Square() {
     return { changeValue, getValue, isEmpty };
 }
 
-function createPlayer(name, number, symbol) {
+function createPlayer(playerName, number, symbol) {
+    let name = playerName;
 
-    const setName = (newName) => name = newName;
+    const getName = () => name;
 
-    return { name, number, symbol, setName };
+    const setName = (newName) => {
+        name = newName;
+    }
+
+    return { number, symbol, getName, setName };
 }

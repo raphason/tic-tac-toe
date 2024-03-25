@@ -91,3 +91,15 @@ body {
 #winner {
     margin: 20px;
 }
+
+.name-input {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    margin: 10px;
+}
+
+.submit-button {
+    display:flex;
+    justify-content: center;
+}
