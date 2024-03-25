@@ -3,7 +3,6 @@ const Gameboard = (function() {
     const columns = 3;
     let board = [];
 
-    //Create Board
     const reset = () => {
         board = [];
         for (let i = 0; i < rows; i++) {
@@ -36,11 +35,12 @@ const Gameboard = (function() {
 })();
 
 const GameController = (function() {
-    playerOne = createPlayer("Player One", 0, "X");
-    playerTwo = createPlayer("Player Two", 1, "O");
+    const symbols = ["X", "O"];
+    playerOne = createPlayer("Player One", 0, symbols[0]);
+    playerTwo = createPlayer("Player Two", 1, symbols[1]);
     players = [playerOne, playerTwo];
     let activePlayer;
-    let winnerFound;
+    let winner;
 
     const getActivePlayer = () => activePlayer;
 
@@ -74,7 +74,7 @@ const GameController = (function() {
             }
 
             if (match === true) { 
-                return match;
+                return players[symbols.indexOf(Gameboard.getSquare(combo[0]).getValue())];
             }
         }
 
@@ -84,12 +84,12 @@ const GameController = (function() {
     const playRound = (square) => {
         let selectedSquare = Gameboard.getSquare(square);
 
-        if (!winnerFound && selectedSquare.isEmpty()) {
+        if (!winner && selectedSquare.isEmpty()) {
             console.log(getActivePlayer().name + " marks square " + square + ".")
             Gameboard.markSquare(selectedSquare, getActivePlayer().symbol);
             Gameboard.printBoard();
             swapActivePlayer();
-            winnerFound = checkWinner();
+            winner = checkWinner();
         }
         else {
             console.log("Game over or square full!");
@@ -99,12 +99,12 @@ const GameController = (function() {
     const newGame = () => {
         Gameboard.reset();
         activePlayer = players[0];
-        winnerFound = false;
+        winner = "";
     }
 
     newGame();
 
-    return { playRound, getActivePlayer, newGame };
+    return { playRound, getActivePlayer, newGame, checkWinner };
 })();
 
 const DisplayController = (function() {
@@ -117,6 +117,8 @@ const DisplayController = (function() {
     const resetButton = document.getElementById("reset-button");
     resetButton.addEventListener("click", resetClickHandler);    
 
+    const winnerDisplay = document.getElementById("winner");
+
     function squareClickHandler(e) {
         let currentSquare = e.target.dataset.number;
         GameController.playRound(currentSquare);
@@ -125,11 +127,13 @@ const DisplayController = (function() {
         e.target.style.color = colors[GameController.getActivePlayer().number];
 
         displayBoard();
+        displayWinner();
     }
 
     function resetClickHandler() {
         GameController.newGame();
         squares.forEach(square => square.innerHTML = '');
+        winnerDisplay.innerHTML = '';
     };
 
     const displayBoard = () => {
@@ -141,6 +145,14 @@ const DisplayController = (function() {
 
             currentSquare.appendChild(textNode);
         }
+    }
+
+    const displayWinner = () => {
+        let winner = GameController.checkWinner();
+        let winnerString = winner ? winner.name + " wins!" : "";
+        let winnerText = document.createTextNode(winnerString);
+        winnerDisplay.innerHTML = '';
+        winnerDisplay.appendChild(winnerText);
     }
 })();
 
